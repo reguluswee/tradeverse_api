@@ -101,7 +101,15 @@ jobs:
             --registry-username "$USERNAME" \
             --registry-password "$PASSWORD" \
             --restart-policy Always \
+            --environment-variables \
+              DALINK_GO_CONFIG_PATH=/app/config/dev.yml \
             "${DNS_ARGS[@]}"
+
+          echo "== Env in ACI (must NOT be empty) =="
+          az container show -g "$RG" -n "$ACI_NAME" --query "containers[0].environmentVariables" -o jsonc
+
+          echo "== State =="
+          az container show -g "$RG" -n "$ACI_NAME" --query "containers[0].instanceView.currentState" -o jsonc
 
           echo "Public IP:"
           az container show -g "$RG" -n "$ACI_NAME" --query ipAddress.ip -o tsv
