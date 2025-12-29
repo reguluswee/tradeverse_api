@@ -63,29 +63,48 @@ jobs:
       #    - 先删再建（最简单可靠）
       - name: Deploy to ACI
         run: |
-          PORT=18080
-          echo "Deploying image: $IMAGE"
-          az container delete -g "$ACI_RG" -n "$ACI_NAME" --yes || true
+          set -euo pipefail
 
-          DNS_ARG=""
-          if [ -n "$ACI_DNS_LABEL" ]; then
-            DNS_ARG="--dns-name-label $ACI_DNS_LABEL"
+          PORT=18080
+          RG="${{ secrets.ACI_RG }}"
+          ACI_NAME="${{ secrets.ACI_NAME }}"
+          DNS_LABEL="${{ secrets.ACI_DNS_LABEL }}"
+          LOGIN_SERVER="${{ steps.acrls.outputs.login_server }}"
+          USERNAME="${{ steps.acr.outputs.username }}"
+          PASSWORD="${{ steps.acr.outputs.password }}"
+
+          echo "Deploying image: $IMAGE"
+          echo "RG=$RG ACI_NAME=$ACI_NAME DNS_LABEL=$DNS_LABEL PORT=$PORT LOGIN_SERVER=$LOGIN_SERVER"
+
+          # 空值保护（非常关键）
+          if [ -z "$RG" ] || [ -z "$ACI_NAME" ] || [ -z "$LOGIN_SERVER" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ]; then
+            echo "Missing required values. Check secrets/step outputs."
+            exit 1
+          fi
+
+          az container delete -g "$RG" -n "$ACI_NAME" --yes || true
+
+          DNS_ARGS=()
+          if [ -n "$DNS_LABEL" ]; then
+            DNS_ARGS+=(--dns-name-label "$DNS_LABEL")
           fi
 
           az container create \
-            -g "$ACI_RG" \
+            -g "$RG" \
             -n "$ACI_NAME" \
             --image "$IMAGE" \
+            --os-type Linux \
             --ip-address Public \
-            --ports "$PORT" \
-            --registry-login-server "${{ steps.acrls.outputs.login_server }}" \
-            --registry-username "${{ steps.acr.outputs.username }}" \
-            --registry-password "${{ steps.acr.outputs.password }}" \
+            --ports $PORT \
+            --registry-login-server "$LOGIN_SERVER" \
+            --registry-username "$USERNAME" \
+            --registry-password "$PASSWORD" \
             --restart-policy Always \
-            $DNS_ARG
+            "${DNS_ARGS[@]}"
 
           echo "Public IP:"
-          az container show -g "$ACI_RG" -n "$ACI_NAME" --query ipAddress.ip -o tsv
+          az container show -g "$RG" -n "$ACI_NAME" --query ipAddress.ip -o tsv
 
           echo "FQDN (if any):"
-          az container show -g "$ACI_RG" -n "$ACI_NAME" --query ipAddress.fqdn -o tsv
+          az container show -g "$RG" -n "$ACI_NAME" --query ipAddress.fqdn -o tsv
+          
