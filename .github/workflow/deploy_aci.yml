@@ -1,0 +1,91 @@
+name: Build & Deploy to Azure Container Instances (ACI)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+      ACI_RG: ${{ secrets.ACI_RG }}
+      ACI_NAME: ${{ secrets.ACI_NAME }}
+      APP_PORT: ${{ secrets.APP_PORT }}
+      ACI_DNS_LABEL: ${{ secrets.ACI_DNS_LABEL }} # 可空
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 1) 动态取 ACR login server（避免你还要额外建 ACR_LOGIN_SERVER secret）
+      - name: Get ACR login server
+        id: acrls
+        run: |
+          LOGIN_SERVER=$(az acr show -n "$ACR_NAME" --query loginServer -o tsv)
+          echo "login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
+
+      # 2) 取 ACR admin 用户名/密码（你现在的方案）
+      - name: Get ACR credentials
+        id: acr
+        run: |
+          echo "username=$ACR_NAME" >> $GITHUB_OUTPUT
+          echo "password=$(az acr credential show -n "$ACR_NAME" --query 'passwords[0].value' -o tsv)" >> $GITHUB_OUTPUT
+
+      - name: Docker login to ACR
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ steps.acrls.outputs.login_server }}
+          username: ${{ steps.acr.outputs.username }}
+          password: ${{ steps.acr.outputs.password }}
+
+      # 3) Build & Push（tag 用短 sha，方便看）
+      - name: Build and push
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          IMAGE="${{ steps.acrls.outputs.login_server }}/tradeverse-api:${TAG}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      # 4) Deploy/Update ACI
+      #    - 先删再建（最简单可靠）
+      - name: Deploy to ACI
+        run: |
+          echo "Deploying image: $IMAGE"
+          az container delete -g "$ACI_RG" -n "$ACI_NAME" --yes || true
+
+          # 如果你不想要 FQDN，就把 --dns-name-label 这行删掉
+          DNS_ARG=""
+          if [ -n "$ACI_DNS_LABEL" ]; then
+            DNS_ARG="--dns-name-label $ACI_DNS_LABEL"
+          fi
+
+          az container create \
+            -g "$ACI_RG" \
+            -n "$ACI_NAME" \
+            --image "$IMAGE" \
+            --ip-address Public \
+            --ports "$APP_PORT" \
+            --registry-login-server "${{ steps.acrls.outputs.login_server }}" \
+            --registry-username "${{ steps.acr.outputs.username }}" \
+            --registry-password "${{ steps.acr.outputs.password }}" \
+            --restart-policy Always \
+            $DNS_ARG
+
+          echo "Public IP:"
+          az container show -g "$ACI_RG" -n "$ACI_NAME" --query ipAddress.ip -o tsv
+
+          echo "FQDN (if any):"
+          az container show -g "$ACI_RG" -n "$ACI_NAME" --query ipAddress.fqdn -o tsv
