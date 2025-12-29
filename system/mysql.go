@@ -69,7 +69,8 @@ func init() {
 
 	// 错误处理
 	if err != nil {
-		log.Fatal(err) // 使用 sys.Logger 记录致命错误
+		log.Error("database initialize error:", err)
+		return
 	}
 
 	// 将数据库实例赋值给全局变量 DB

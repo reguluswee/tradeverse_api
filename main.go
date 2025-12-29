@@ -64,7 +64,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		ticker := time.NewTicker(10 * time.Second) // 每10秒检查一次
+		ticker := time.NewTicker(24 * time.Hour) // 每10秒检查一次
 		defer ticker.Stop()
 
 		for {
