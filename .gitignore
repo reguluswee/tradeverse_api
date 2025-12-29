@@ -26,7 +26,6 @@ go.work.sum
 *.json
 .idea
 
-config/*.yml
 
 tools/m_test.go
 chaos-api
