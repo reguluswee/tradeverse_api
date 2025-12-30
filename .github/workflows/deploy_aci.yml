@@ -103,6 +103,10 @@ jobs:
             --restart-policy Always \
             --environment-variables \
               DALINK_GO_CONFIG_PATH=/app/config/dev.yml \
+              DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+              DATABASE_USER=${{ secrets.DATABASE_USER }} \
+              DATABASE_PWD=${{ secrets.DATABASE_PWD }} \
+              DATABASE_PORT=${{ secrets.DATABASE_PORT }}
             "${DNS_ARGS[@]}"
 
           echo "== Env in ACI (must NOT be empty) =="

@@ -52,7 +52,7 @@ func init() {
 	)
 
 	// 构造 MySQL DSN（数据源名称）
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=true",
 		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.DBName)
 
 	// 打开 MySQL 连接
@@ -73,6 +73,7 @@ func init() {
 		return
 	}
 
+	log.Info("database initialize success")
 	// 将数据库实例赋值给全局变量 DB
 	DB = database
 }

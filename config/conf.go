@@ -10,6 +10,7 @@ import (
 
 	system "chaos/api/log"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -161,6 +162,10 @@ func findProjectRoot(currentDir, rootIndicator string) (string, error) {
 }
 
 func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("Error loading .env file: %v", err)
+	}
 	var confFilePath string
 
 	if configFilePathFromEnv := os.Getenv("DALINK_GO_CONFIG_PATH"); configFilePathFromEnv != "" {
@@ -181,7 +186,7 @@ func init() {
 	viper.SetConfigFile(confFilePath)
 
 	viper.SetConfigType("yml")
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Unable to read configuration file: %s", err)
 	}
@@ -189,6 +194,29 @@ func init() {
 	err = viper.Unmarshal(&systemConfig)
 	if err != nil {
 		log.Fatalf("Unable to parse configuration: %s", err)
+	}
+
+	if len(systemConfig.Database.Host) == 0 {
+		dbp := os.Getenv("DATABASE_HOST")
+		log.Println("reset db host:", dbp)
+		systemConfig.Database.Host = dbp
+	}
+	if len(systemConfig.Database.User) == 0 {
+		dbp := os.Getenv("DATABASE_USER")
+		log.Println("reset db user:", dbp)
+		systemConfig.Database.User = dbp
+	}
+	if len(systemConfig.Database.Password) == 0 {
+		dbp := os.Getenv("DATABASE_PWD")
+		systemConfig.Database.Password = dbp
+	}
+	if systemConfig.Database.Port == 0 {
+		dbp := os.Getenv("DATABASE_PORT")
+		port, err := strconv.Atoi(dbp)
+		if err != nil {
+			log.Fatalf("invalid DATABASE.PORT value: %v", err)
+		}
+		systemConfig.Database.Port = port
 	}
 	initRpcs(systemConfig.Chain)
 

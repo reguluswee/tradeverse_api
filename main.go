@@ -17,16 +17,10 @@ import (
 	"sync"
 	"syscall"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	fmt.Println("starting...")
-	err := godotenv.Load()
-	if err != nil {
-		log.Warn("Error loading .env file")
-	}
+	log.Info("starting...")
 
 	// 创建主上下文和取消函数
 	ctx, cancel := context.WithCancel(context.Background())

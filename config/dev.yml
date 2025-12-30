@@ -30,10 +30,10 @@ chain:
 
 database:
   type: mysql
-  host: localhost
-  port: 3306
-  user: root
-  password: 123456
+  host: 
+  port: 
+  user: 
+  password: 
   dbname: tradeverse_db_main
   sslmode: disable
   TimeZone: Asia/Shanghai
