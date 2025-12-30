@@ -105,8 +105,8 @@ jobs:
               DATABASE_USER=${{ secrets.DATABASE_USER }} \
               DATABASE_PWD=${{ secrets.DATABASE_PWD }} \
               DATABASE_PORT=${{ secrets.DATABASE_PORT }}
-            --log-analytics-workspace $LOG_WORKSPACE_ID
-            --log-analytics-workspace-key $LOG_PRIMARY_KEY
+            --log-analytics-workspace $LOG_WORKSPACE_ID \
+            --log-analytics-workspace-key $LOG_PRIMARY_KEY \
             "${DNS_ARGS[@]}"
 
           echo "== Env in ACI (must NOT be empty) =="
