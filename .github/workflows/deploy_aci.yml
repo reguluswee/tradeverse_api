@@ -101,10 +101,19 @@ jobs:
             --restart-policy Always \
             --environment-variables \
               DALINK_GO_CONFIG_PATH=/app/config/dev.yml \
-              DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
-              DATABASE_USER=${{ secrets.DATABASE_USER }} \
-              DATABASE_PWD=${{ secrets.DATABASE_PWD }} \
-              DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
+              DATABASE_HOST='${{ secrets.DATABASE_HOST }}' \
+              DATABASE_USER='${{ secrets.DATABASE_USER }}' \
+              DATABASE_PORT='${{ secrets.DATABASE_PORT }}' \
+              GMAIL_APP_ACC='${{ secrets.GMAIL_APP_ACC }}' \
+              GMAIL_SENDER='${{ secrets.GMAIL_SENDER }}' \
+              GMAIL_TEST_TO='${{ secrets.GMAIL_TEST_TO }}' \
+              GMAIL_CREDENTIAL=/mnt/secrets/credentials.json \
+            --secure-environment-variables \
+              DATABASE_PWD='${{ secrets.DATABASE_PWD }}' \
+              GMAIL_APP_PWD='${{ secrets.GMAIL_APP_PWD }}' \
+            --secrets \
+              credentials.json='${{ secrets.GMAIL_CREDENTIAL_JSON }}' \
+            --secrets-mount-path /mnt/secrets \
             --log-analytics-workspace "$LOG_WORKSPACE_ID" \
             --log-analytics-workspace-key "$LOG_PRIMARY_KEY" \
             "${DNS_ARGS[@]}"
