@@ -94,7 +94,10 @@ jobs:
 
           # ---- credentials.json as secret file ----
           printf '%s' '${{ secrets.GMAIL_CREDENTIAL }}' > credentials.json
+          printf '%s' '${{ secrets.GMAIL_TOKEN }}' > token.json
+
           CRED_CONTENT="$(cat credentials.json)"
+          TOKEN_CONTENT="$(cat token.json)"
 
           az container create \
             -g "$RG" \
@@ -118,11 +121,13 @@ jobs:
               GMAIL_SENDER='${{ secrets.GMAIL_SENDER }}' \
               GMAIL_TEST_TO='${{ secrets.GMAIL_TEST_TO }}' \
               GMAIL_CREDENTIAL=/mnt/secrets/credentials.json \
+              GMAIL_TOKEN=/mnt/secrets/token.json \
             --secure-environment-variables \
               DATABASE_PWD='${{ secrets.DATABASE_PWD }}' \
               GMAIL_APP_PWD='${{ secrets.GMAIL_APP_PWD }}' \
             --secrets \
               credentials.json="$CRED_CONTENT" \
+              token.json="$TOKEN_CONTENT" \
             --secrets-mount-path /mnt/secrets \
             --log-analytics-workspace "$LOG_WORKSPACE_ID" \
             --log-analytics-workspace-key "$LOG_PRIMARY_KEY" \
