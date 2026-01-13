@@ -2,6 +2,7 @@ package model
 
 const (
 	TB_SYS_CHANNEL               = "sys_channel"
+	TB_SYS_ASSET                 = "t_asset"
 	TB_USER_MAIN                 = "user_main"
 	TB_USER_PROVIDER             = "user_provider"
 	TB_USER_PROFILE              = "user_profile"
