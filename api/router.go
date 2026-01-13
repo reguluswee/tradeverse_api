@@ -89,9 +89,9 @@ func Init() *gin.Engine {
 			advancedGroup.POST("/trans/spend", oauth.SpendHandler)
 		}
 		//this is directly money control api, need special advanced auth
-		apiGroup2.POST("/trans/freeze", oauth.FreezeHandler)
-		apiGroup2.POST("/trans/unfreeze", oauth.UnFreezeHandler)
-		apiGroup2.POST("/trans/spend", oauth.SpendHandler)
+		// apiGroup2.POST("/trans/freeze", oauth.FreezeHandler)
+		// apiGroup2.POST("/trans/unfreeze", oauth.UnFreezeHandler)
+		// apiGroup2.POST("/trans/spend", oauth.SpendHandler)
 	}
 	return r
 }
