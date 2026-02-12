@@ -122,20 +122,20 @@ func SendVerifyCodeMailAPI(toEmail, sort string) error {
 	html := fmt.Sprintf(`
         <div style="font-family:Arial,sans-serif;font-size:16px;color:#222;max-width:420px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;padding:32px 24px;background:#f9fafb;">
             <div style="text-align:center;margin-bottom:18px;">
-                <span style="display:inline-block;font-size:22px;font-weight:bold;color:#2563eb;letter-spacing:1px;">hash.bid</span>
+                <span style="display:inline-block;font-size:22px;font-weight:bold;color:#2563eb;letter-spacing:1px;">KAIVO</span>
             </div>
             <p style="margin-bottom:18px;">Dear user,</p>
-            <p style="margin-bottom:18px;">You are receiving this email because you (or someone else) requested an email verification code for your hash.bid account.</p>
+            <p style="margin-bottom:18px;">You are receiving this email because you (or someone else) requested an email verification code for your KAIVO account.</p>
             <div style="text-align:center;margin:24px 0;">
                 <span style="display:inline-block;font-size:32px;font-weight:bold;letter-spacing:4px;color:#2563eb;background:#fff;padding:12px 32px;border-radius:8px;border:1px solid #dbeafe;">%s</span>
             </div>
             <p style="margin-bottom:18px;">This code is valid for <b>10 minutes</b>. Please do not share it with anyone.</p>
             <p style="margin-bottom:18px;">If you did not request this code, you can safely ignore this email.</p>
-            <div style="margin-top:32px;text-align:center;color:#888;font-size:13px;">This is an official email from hash.bid. <br/>If you have any questions, please contact us at <a href="mailto:nnnnngamefi@gmail.com" style="color:#2563eb;">nnnnngamefi@gmail.com</a>.</div>
+            <div style="margin-top:32px;text-align:center;color:#888;font-size:13px;">This is an official email from KAIVO. <br/>If you have any questions, please contact us at <a href="mailto:nnnnngamefi@gmail.com" style="color:#2563eb;">nnnnngamefi@gmail.com</a>.</div>
         </div>
     `, code)
 
-	subject := "Your verification code for NGameFi Platform"
+	subject := "Your verification code for KAIVO Platform"
 
 	// 组装 RFC822 报文
 	raw := fmt.Sprintf(
@@ -183,20 +183,20 @@ func SendVerifyCodeMailAPIWithUserMainId(toEmail, sort string, userMainId uint64
 	html := fmt.Sprintf(`
         <div style="font-family:Arial,sans-serif;font-size:16px;color:#222;max-width:420px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;padding:32px 24px;background:#f9fafb;">
             <div style="text-align:center;margin-bottom:18px;">
-                <span style="display:inline-block;font-size:22px;font-weight:bold;color:#2563eb;letter-spacing:1px;">hash.bid</span>
+                <span style="display:inline-block;font-size:22px;font-weight:bold;color:#2563eb;letter-spacing:1px;">KAIVO</span>
             </div>
             <p style="margin-bottom:18px;">Dear user,</p>
-            <p style="margin-bottom:18px;">You are receiving this email because you (or someone else) requested an email verification code for your hash.bid account.</p>
+            <p style="margin-bottom:18px;">You are receiving this email because you (or someone else) requested an email verification code for your KAIVO account.</p>
             <div style="text-align:center;margin:24px 0;">
                 <span style="display:inline-block;font-size:32px;font-weight:bold;letter-spacing:4px;color:#2563eb;background:#fff;padding:12px 32px;border-radius:8px;border:1px solid #dbeafe;">%s</span>
             </div>
             <p style="margin-bottom:18px;">This code is valid for <b>10 minutes</b>. Please do not share it with anyone.</p>
             <p style="margin-bottom:18px;">If you did not request this code, you can safely ignore this email.</p>
-            <div style="margin-top:32px;text-align:center;color:#888;font-size:13px;">This is an official email from hash.bid. <br/>If you have any questions, please contact us at <a href="mailto:nnnnngamefi@gmail.com" style="color:#2563eb;">nnnnngamefi@gmail.com</a>.</div>
+            <div style="margin-top:32px;text-align:center;color:#888;font-size:13px;">This is an official email from KAIVO. <br/>If you have any questions, please contact us at <a href="mailto:nnnnngamefi@gmail.com" style="color:#2563eb;">nnnnngamefi@gmail.com</a>.</div>
         </div>
     `, code)
 
-	subject := "Your verification code for NGameFi Platform"
+	subject := "Your verification code for KAIVO Platform"
 
 	// 组装 RFC822 报文
 	raw := fmt.Sprintf(
