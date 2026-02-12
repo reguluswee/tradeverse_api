@@ -1,6 +1,7 @@
 package home
 
 import (
+	mycache "chaos/api/cache"
 	"net/http"
 	"time"
 
@@ -14,12 +15,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CompanyList 获取 Company 列表
+// CompanyList 获取 Company 列表（缓存 5 分钟）
 func CompanyList(c *gin.Context) {
 	res := common.Response{}
 	res.Timestamp = time.Now().Unix()
 	res.Code = codes.CODE_SUCCESS
 	res.Msg = "success"
+
+	if list, ok := mycache.GetCompanyList(); ok {
+		res.Data = gin.H{"list": list}
+		c.JSON(http.StatusOK, res)
+		return
+	}
 
 	db := system.GetDb()
 	var list []model.Company
@@ -32,6 +39,7 @@ func CompanyList(c *gin.Context) {
 		return
 	}
 
+	mycache.SetCompanyList(list)
 	res.Data = gin.H{"list": list}
 	c.JSON(http.StatusOK, res)
 }
