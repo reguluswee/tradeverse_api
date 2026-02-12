@@ -301,9 +301,10 @@ func Register(c *gin.Context) {
 	passwordHash := fmt.Sprintf("%x", sha256.Sum256([]byte(req.Password)))
 
 	var existRef model.UserRef
-	if req.Ref != "" {
+	if len(req.Ref) > 0 {
 		db.Model(&model.UserRef{}).Where("ref_code = ?", req.Ref).First(&existRef)
 	}
+	log.Info("existRef: ", existRef)
 	if existRef.ID == 0 {
 		res.Code = codes.CODE_ERR_PROCESSING
 		res.Msg = "referral code not found"
